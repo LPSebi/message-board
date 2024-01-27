@@ -31,7 +31,7 @@ function board() {
     <main className="bg-background flex h-screen w-screen items-center justify-center py-5">
       <div className="grid h-full w-[clamp(600px,50%,800px)] grid-rows-[auto,1fr,auto] gap-4 rounded-xl border">
         <div className="flex h-16 items-center justify-center border-b text-4xl font-semibold">
-          Text Board
+          Message Board
         </div>
         <div className="min-h-full">
           {messages.map((message) => (
