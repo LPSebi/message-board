@@ -7,7 +7,7 @@ import { Button } from "~/components/ui/button";
 export default function HomePage() {
   const router = useRouter();
   return (
-    <div className="bg-grid-white/[0.02] relative flex h-screen w-full overflow-hidden rounded-md bg-black/[0.96] antialiased md:items-center md:justify-center">
+    <div className="bg-grid-white/[0.02] relative flex h-screen w-full overflow-hidden rounded-md bg-background/[0.96] antialiased md:items-center md:justify-center">
       <Spotlight
         className="-top-40 left-40 md:-top-60 md:left-[35rem]"
         fill="white"

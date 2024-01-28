@@ -1,6 +1,6 @@
-import "~/styles/globals.css";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "~/components/theme-provider";
+import "~/styles/globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -21,12 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`font-sans ${inter.variable}`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           {children}
         </ThemeProvider>
       </body>

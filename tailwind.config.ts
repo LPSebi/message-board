@@ -7,6 +7,7 @@ const config = {
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
+    "./src/styles/**/*.css", //NOTE - FIX THEME NOT WORKING (only working with [data-theme="dark"])
   ],
   prefix: "",
   theme: {
@@ -85,7 +86,7 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("tailwindcss-animated")],
 } satisfies Config;
 
 export default config;
