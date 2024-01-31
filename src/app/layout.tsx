@@ -9,7 +9,7 @@ const inter = Inter({
 
 export const metadata = {
     title: "Message Board",
-    description: "A message board that resets every week.",
+    description: "A message board",
     icons: [{ rel: "icon", url: "/favicon.ico" }],
 }
 
