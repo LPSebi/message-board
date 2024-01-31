@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback } from "~/components/ui/avatar"
 import { Button } from "~/components/ui/button"
 import DarkmodeButton from "~/components/ui/darkmode-button"
 import { Input } from "~/components/ui/input"
+import { useToast } from "~/components/ui/use-toast"
 import { LoadMessages } from "~/server/actions/loadMessages"
 import { sendMessages } from "~/server/actions/sendMessage"
 
@@ -26,6 +27,7 @@ function Board() {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [messages, setMessages] = useState<Unwrap<typeof LoadMessages>>([])
     const { data: session, status } = useSession()
+    const { toast } = useToast()
 
     // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
@@ -39,7 +41,7 @@ function Board() {
         if (pressedSend) {
             setTimeout(() => {
                 pressedSend && setPressedSend(false)
-            }, 5000)
+            }, 50000)
         }
         inputRef.current?.focus()
     }, [pressedSend])
@@ -78,16 +80,49 @@ function Board() {
 
     function sendMessage(message: string) {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        sendMessages(message).then((data) => {
-            // check data for errors
-            if (data instanceof Error) {
-                console.error(data)
-                return
-            }
-            setInputContent("")
-            setPressedSend(false)
-            setMessages((messages) => [...messages, data])
-        })
+        sendMessages(message)
+            .then((data) => {
+                console.log(data)
+                // check data for errors
+                if (data instanceof Error) {
+                    console.error(data)
+                    return
+                }
+                if (data?.error) {
+                    toast({
+                        title: "Uh oh! Something went wrong!",
+                        description: data.error,
+                        variant: "destructive",
+                    })
+                    return
+                }
+                if (data?.ratelimit) {
+                    toast({
+                        title: "Uh oh! You're being Ratelimited!",
+                        description: `Try again in ${Math.floor(new Date(data.ratelimit.reset).getTime() / 1000 - new Date().getTime() / 1000)} seconds.`,
+                        variant: "destructive",
+                    })
+                    return
+                }
+                if (!data) {
+                    return
+                }
+                setInputContent("")
+                setMessages((messages) => [
+                    ...messages,
+                    data as (typeof messages)[number],
+                ])
+            })
+            .finally(() => {
+                setPressedSend(false)
+            })
+        // setPressedSend(false)
+    }
+
+    const AlwaysScrollToBottom = () => {
+        const elementRef = useRef<HTMLDivElement>(null)
+        useEffect(() => elementRef?.current?.scrollIntoView())
+        return <span ref={elementRef} />
     }
 
     //TODO - Fix overflow
@@ -104,11 +139,11 @@ function Board() {
                         <div>Message Board</div>
                     </div>
                 </div>
-                <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-5 overflow-x-hidden overflow-y-scroll ">
                     {messages.map((message) => (
                         <div
                             key={message.id}
-                            className="flex flex-col items-center justify-center border-b px-5 pb-3"
+                            className="flex flex-col items-center justify-center border-b px-5 pb-3 last-of-type:border-b-0"
                         >
                             <div className="flex w-full items-center justify-between">
                                 <div className="flex">
@@ -144,6 +179,7 @@ function Board() {
                             </div>
                         </div>
                     ))}
+                    <AlwaysScrollToBottom />
                 </div>
                 <div className="flex h-16 items-center justify-center border-t">
                     <form className="flex h-full w-full content-center items-center gap-3 px-16">

@@ -7,7 +7,7 @@ export async function LoadMessages() {
     }
 
     const DBmessages = await db.message.findMany({
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: "asc" },
         include: {
             createdBy: {
                 select: {
