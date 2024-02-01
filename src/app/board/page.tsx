@@ -8,17 +8,9 @@ import { Button } from "~/components/ui/button"
 import DarkmodeButton from "~/components/ui/darkmode-button"
 import { Input } from "~/components/ui/input"
 import { useToast } from "~/components/ui/use-toast"
+import type { Unwrap } from "~/lib/types"
 import { LoadMessages } from "~/server/actions/loadMessages"
 import { sendMessages } from "~/server/actions/sendMessage"
-
-type Unwrap<T> =
-    T extends Promise<infer U>
-        ? U
-        : T extends (...args: unknown[]) => Promise<infer U>
-          ? U
-          : T extends (...args: unknown[]) => infer U
-            ? U
-            : T
 
 function Board() {
     const inputRef = useRef<HTMLInputElement>(null)
@@ -46,7 +38,7 @@ function Board() {
         inputRef.current?.focus()
     }, [pressedSend])
 
-    // check if sessoin is loading
+    // check if session is loading
     if (status === "loading") {
         return (
             <div className="flex h-screen w-screen items-center justify-center bg-background">
@@ -116,7 +108,6 @@ function Board() {
             .finally(() => {
                 setPressedSend(false)
             })
-        // setPressedSend(false)
     }
 
     const AlwaysScrollToBottom = () => {
@@ -127,98 +118,93 @@ function Board() {
 
     //TODO - Fix overflow
     return (
-        <main className="flex h-screen w-screen items-center justify-center bg-background py-5">
-            <div className="grid h-full w-[clamp(600px,50%,800px)] grid-rows-[auto,1fr,auto] gap-4 rounded-xl border bg-card">
-                <div className="relative flex h-16 border-b text-4xl font-semibold">
-                    <div className="mr-5 flex w-full items-center justify-end">
-                        <Suspense>
-                            <DarkmodeButton />
-                        </Suspense>
-                    </div>
-                    <div className="absolute flex h-full w-full items-center justify-center">
-                        <div>Message Board</div>
-                    </div>
+        <div className="grid h-full w-[clamp(600px,50%,800px)] grid-rows-[auto,1fr,auto] gap-4 rounded-xl border bg-card">
+            <div className="relative flex h-16 border-b text-4xl font-semibold">
+                <div className="mr-5 flex w-full items-center justify-end">
+                    <Suspense>
+                        <DarkmodeButton />
+                    </Suspense>
                 </div>
-                <div className="flex flex-col gap-5 overflow-x-hidden overflow-y-scroll ">
-                    {messages.map((message) => (
-                        <div
-                            key={message.id}
-                            className="flex flex-col items-center justify-center border-b px-5 pb-3 last-of-type:border-b-0"
-                        >
-                            <div className="flex w-full items-center justify-between">
-                                <div className="flex">
-                                    <Avatar className="mb-3">
-                                        <AvatarImage
-                                            // get the image from the reference user of the message
-                                            src={message.createdBy.image ?? ""}
-                                            width={32}
-                                            height={32}
-                                            alt="User Image of the message creator"
-                                            className="h-8 w-8 rounded-full"
-                                        />
-                                        <AvatarFallback className="bg-background">
-                                            {message.createdBy.name?.charAt(0)}
-                                        </AvatarFallback>
-                                    </Avatar>
-                                    <div className="ml-2 flex flex-col">
-                                        <span className="text-sm font-semibold">
-                                            {message.createdBy.name}
-                                        </span>
-                                        <span className="text-xs text-gray-500">
-                                            {message.createdAt.toLocaleString()}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="flex w-full items-center justify-between">
-                                <div className="flex items-center">
+                <div className="absolute flex h-full w-full items-center justify-center">
+                    <div>Message Board</div>
+                </div>
+            </div>
+            <div className="flex flex-col gap-5 overflow-x-hidden overflow-y-scroll ">
+                {messages.map((message) => (
+                    <div
+                        key={message.id}
+                        className="flex flex-col items-center justify-center border-b px-5 pb-3 last-of-type:border-b-0"
+                    >
+                        <div className="flex w-full items-center justify-between">
+                            <div className="flex">
+                                <Avatar className="mb-3">
+                                    <AvatarImage
+                                        // get the image from the reference user of the message
+                                        src={message.createdBy.image ?? ""}
+                                        width={32}
+                                        height={32}
+                                        alt="User Image of the message creator"
+                                        className="h-8 w-8 rounded-full"
+                                    />
+                                    <AvatarFallback className="bg-background">
+                                        {message.createdBy.name?.charAt(0)}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <div className="ml-2 flex flex-col">
                                     <span className="text-sm font-semibold">
-                                        {message.content}
+                                        {message.createdBy.name}
+                                    </span>
+                                    <span className="text-xs text-gray-500">
+                                        {message.createdAt.toLocaleString()}
                                     </span>
                                 </div>
                             </div>
                         </div>
-                    ))}
-                    <AlwaysScrollToBottom />
-                </div>
-                <div className="flex h-16 items-center justify-center border-t">
-                    <form className="flex h-full w-full content-center items-center gap-3 px-16">
-                        <Input
-                            type="text"
-                            autoFocus
-                            className="rounded-md"
-                            placeholder="Enter your message"
-                            disabled={pressedSend}
-                            value={inputContent}
-                            onChange={(e) => {
-                                setInputContent(e.target.value)
-                            }}
-                            ref={inputRef}
-                        />
-                        <Button
-                            type="submit"
-                            disabled={pressedSend}
-                            size={"icon"}
-                            variant="outline"
-                            onClick={() => {
-                                setPressedSend(true)
-                                sendMessage(inputContent)
-                            }}
-                        >
-                            {!pressedSend && (
-                                <SendHorizontalIcon className="" size={20} />
-                            )}
-                            {pressedSend && (
-                                <Loader2Icon
-                                    className="animate-spin"
-                                    size={20}
-                                />
-                            )}
-                        </Button>
-                    </form>
-                </div>
+                        <div className="flex w-full items-center justify-between">
+                            <div className="flex items-center">
+                                <span className="text-sm font-semibold">
+                                    {message.content}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+                <AlwaysScrollToBottom />
             </div>
-        </main>
+            <div className="flex h-16 items-center justify-center border-t">
+                <form className="flex h-full w-full content-center items-center gap-3 px-16">
+                    <Input
+                        type="text"
+                        autoFocus
+                        className="rounded-md"
+                        placeholder="Enter your message"
+                        disabled={pressedSend}
+                        value={inputContent}
+                        onChange={(e) => {
+                            setInputContent(e.target.value)
+                        }}
+                        ref={inputRef}
+                    />
+                    <Button
+                        type="submit"
+                        disabled={pressedSend}
+                        size={"icon"}
+                        variant="outline"
+                        onClick={() => {
+                            setPressedSend(true)
+                            sendMessage(inputContent)
+                        }}
+                    >
+                        {!pressedSend && (
+                            <SendHorizontalIcon className="" size={20} />
+                        )}
+                        {pressedSend && (
+                            <Loader2Icon className="animate-spin" size={20} />
+                        )}
+                    </Button>
+                </form>
+            </div>
+        </div>
     )
 }
 
