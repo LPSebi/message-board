@@ -1,5 +1,5 @@
 "use client"
-import { Prisma, User } from "@prisma/client"
+import type { Prisma } from "@prisma/client"
 import { AvatarImage } from "@radix-ui/react-avatar"
 import { Loader2Icon, SendHorizontalIcon } from "lucide-react"
 import { signIn, useSession } from "next-auth/react"

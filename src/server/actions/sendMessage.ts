@@ -5,6 +5,7 @@ import "server-only"
 import { ApiPostRateLimit } from "~/lib/rate-limits"
 import { authOptions } from "../auth"
 import { db } from "../db"
+import { env } from "~/env"
 
 export async function sendMessages(message: string) {
     const session = await getServerSession(authOptions)
@@ -68,7 +69,7 @@ export async function sendMessages(message: string) {
         createdBy: DBUser,
     }
 
-    await fetch("http://localhost:3000/api/socket/sendIOMessage", {
+    await fetch(env.NEXT_PUBLIC_SOCKET_URL + "/api/socket/sendIOMessage", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

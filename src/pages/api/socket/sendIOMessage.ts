@@ -1,7 +1,7 @@
 import { type NextResponse } from "next/server"
 import type { LoadMessages } from "~/server/actions/loadMessages"
 import type { NextApiResponseServerIO } from "./types"
-import { Unwrap } from "~/lib/types"
+import type { Unwrap } from "~/lib/types"
 
 export const config = {
     api: { bodyParser: true },
