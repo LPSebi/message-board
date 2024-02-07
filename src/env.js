@@ -40,6 +40,10 @@ export const env = createEnv({
         DISCORD_CLIENT_SECRET: z.string(),
     },
 
+    shared: {
+        NEXT_PUBLIC_SOCKET_URL: z.string().url(),
+    },
+
     /**
      * Specify your client-side environment variables schema here. This way you can ensure the app
      * isn't built with invalid env vars. To expose them to the client, prefix them with
@@ -62,6 +66,7 @@ export const env = createEnv({
         NEXTAUTH_URL: process.env.NEXTAUTH_URL,
         DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
         DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
+        NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
     },
     /**
      * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

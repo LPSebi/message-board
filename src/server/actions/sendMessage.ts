@@ -62,6 +62,23 @@ export async function sendMessages(message: string) {
             },
         },
     })
+
+    const sendIOContent = {
+        ...DBMessage,
+        createdBy: DBUser,
+    }
+
+    await fetch("http://localhost:3000/api/socket/sendIOMessage", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+        },
+        body: JSON.stringify({
+            content: sendIOContent,
+        }),
+    })
+
     return {
         ...DBMessage,
         createdBy: DBUser,

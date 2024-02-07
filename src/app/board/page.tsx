@@ -1,13 +1,16 @@
 "use client"
+import { Prisma, User } from "@prisma/client"
 import { AvatarImage } from "@radix-ui/react-avatar"
 import { Loader2Icon, SendHorizontalIcon } from "lucide-react"
 import { signIn, useSession } from "next-auth/react"
 import { Suspense, useEffect, useRef, useState } from "react"
+import SocketIOBadge from "~/components/ui-custom/socketio-badge"
+import { useToast } from "~/components/ui-custom/use-toast"
 import { Avatar, AvatarFallback } from "~/components/ui/avatar"
 import { Button } from "~/components/ui/button"
 import DarkmodeButton from "~/components/ui/darkmode-button"
 import { Input } from "~/components/ui/input"
-import { useToast } from "~/components/ui/use-toast"
+import { useSocket } from "~/lib/socketio/provider"
 import type { Unwrap } from "~/lib/types"
 import { LoadMessages } from "~/server/actions/loadMessages"
 import { sendMessages } from "~/server/actions/sendMessage"
@@ -16,17 +19,18 @@ function Board() {
     const inputRef = useRef<HTMLInputElement>(null)
     const [pressedSend, setPressedSend] = useState(false)
     const [inputContent, setInputContent] = useState("")
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [messages, setMessages] = useState<Unwrap<typeof LoadMessages>>([])
     const { data: session, status } = useSession()
+    const { socket, isConnected } = useSocket()
     const { toast } = useToast()
 
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     useEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        LoadMessages().then((data) => {
+        void LoadMessages().then((data) => {
             setMessages(data)
         })
+        return () => {
+            setMessages([])
+        }
     }, [])
 
     useEffect(() => {
@@ -37,6 +41,38 @@ function Board() {
         }
         inputRef.current?.focus()
     }, [pressedSend])
+
+    useEffect(() => {
+        if (!socket || !session) {
+            return
+        }
+        socket.on(
+            "message",
+            (
+                data: Prisma.MessageGetPayload<{ include: { createdBy: true } }>
+            ) => {
+                console.log(data)
+                console.log(session.user.id, data.createdBy.id)
+
+                // check if message exists already
+                if (messages.some((message) => message.id === data.id)) {
+                    console.log("message exists")
+                    return
+                }
+                // check if the message is from the current user
+                if (data.createdBy.id === session?.user?.id) {
+                    console.log("message is from current user")
+                    return
+                }
+
+                setMessages((messages) => [...messages, data])
+            }
+        )
+
+        return () => {
+            socket.off("message")
+        }
+    }, [session, socket, messages])
 
     // check if session is loading
     if (status === "loading") {
@@ -99,6 +135,7 @@ function Board() {
                 if (!data) {
                     return
                 }
+
                 setInputContent("")
                 setMessages((messages) => [
                     ...messages,
@@ -120,7 +157,8 @@ function Board() {
     return (
         <div className="grid h-full w-[clamp(600px,50%,800px)] grid-rows-[auto,1fr,auto] gap-4 rounded-xl border bg-card">
             <div className="relative flex h-16 border-b text-4xl font-semibold">
-                <div className="mr-5 flex w-full items-center justify-end">
+                <div className="z-10 mr-5 flex w-full items-center justify-end gap-3">
+                    <SocketIOBadge isConnected={isConnected} />
                     <Suspense>
                         <DarkmodeButton />
                     </Suspense>
