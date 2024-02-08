@@ -38,6 +38,8 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
             socketInstance.disconnect()
         }
     }, [])
+    console.log(socket)
+    console.log(isConnected)
 
     if (!socket) {
         return null

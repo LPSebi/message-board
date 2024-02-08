@@ -27,6 +27,7 @@ function Board() {
     useEffect(() => {
         void LoadMessages().then((data) => {
             setMessages(data)
+            console.log(data)
         })
         return () => {
             setMessages([])
@@ -193,7 +194,10 @@ function Board() {
                                         {message.createdBy.name}
                                     </span>
                                     <span className="text-xs text-gray-500">
-                                        {message.createdAt.toLocaleString()}
+                                        {/* fix date getting parsed as string from api */}
+                                        {new Date(
+                                            message.createdAt
+                                        ).toLocaleString()}
                                     </span>
                                 </div>
                             </div>
