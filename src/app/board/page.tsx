@@ -172,7 +172,7 @@ function Board() {
                 {messages.map((message) => (
                     <div
                         key={message.id}
-                        className="flex flex-col items-center justify-center border-b px-5 pb-3 last-of-type:border-b-0"
+                        className="flex flex-col items-center justify-center break-all border-b px-5 pb-3 last-of-type:border-b-0"
                     >
                         <div className="flex w-full items-center justify-between">
                             <div className="flex">
