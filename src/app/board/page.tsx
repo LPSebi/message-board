@@ -220,7 +220,7 @@ function Board() {
                         autoFocus
                         className="rounded-md"
                         placeholder="Enter your message"
-                        disabled={pressedSend}
+                        disabled={pressedSend || !isConnected}
                         value={inputContent}
                         onChange={(e) => {
                             setInputContent(e.target.value)
@@ -229,7 +229,7 @@ function Board() {
                     />
                     <Button
                         type="submit"
-                        disabled={pressedSend}
+                        disabled={pressedSend || !isConnected}
                         size={"icon"}
                         variant="outline"
                         onClick={() => {
