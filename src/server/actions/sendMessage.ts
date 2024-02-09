@@ -22,6 +22,14 @@ export async function sendMessages(message: string) {
             error: "Message cannot be empty",
         }
     }
+
+    // message limit
+    if (message.length > 10000) {
+        return {
+            error: "Message cannot be longer than 1000 characters",
+        }
+    }
+
     //SECTION - rate limit with upstash
 
     const ip = headers().get("x-forwarded-for")
