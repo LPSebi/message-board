@@ -6,6 +6,7 @@ import { ApiPostRateLimit } from "~/lib/rate-limits"
 import { authOptions } from "../auth"
 import { db } from "../db"
 import { env } from "~/env"
+import { checkStringOnlyEmoji } from "~/lib/utils"
 
 export async function sendMessages(message: string) {
     const session = await getServerSession(authOptions)
@@ -27,6 +28,15 @@ export async function sendMessages(message: string) {
     if (message.length > 1000) {
         return {
             error: "Message cannot be longer than 1000 characters",
+        }
+    }
+
+    // message limit for emojis
+    console.log(message.length)
+    if (checkStringOnlyEmoji(message) && message.length >= 20) {
+        console.log(message.length)
+        return {
+            error: "Message only containing emojis cannot have more than 10 emojis",
         }
     }
 

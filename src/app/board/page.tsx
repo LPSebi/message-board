@@ -1,19 +1,22 @@
 "use client"
 import type { Prisma } from "@prisma/client"
 import { AvatarImage } from "@radix-ui/react-avatar"
-import { Loader2Icon, SendHorizontalIcon } from "lucide-react"
+import { ExternalLinkIcon, Loader2Icon, SendHorizontalIcon } from "lucide-react"
 import { signIn, useSession } from "next-auth/react"
 import { Suspense, useEffect, useRef, useState } from "react"
 import SocketIOBadge from "~/components/ui-custom/socketio-badge"
-import { useToast } from "~/components/ui-custom/use-toast"
+import { toast } from "sonner"
 import { Avatar, AvatarFallback } from "~/components/ui/avatar"
 import { Button } from "~/components/ui/button"
 import DarkmodeButton from "~/components/ui/darkmode-button"
 import { Input } from "~/components/ui/input"
 import { useSocket } from "~/lib/socketio/provider"
 import type { Unwrap } from "~/lib/types"
+import { checkStringOnlyEmoji } from "~/lib/utils"
 import { LoadMessages } from "~/server/actions/loadMessages"
 import { sendMessages } from "~/server/actions/sendMessage"
+import Linkify from "linkify-react"
+import Link from "next/link"
 
 function Board() {
     const inputRef = useRef<HTMLInputElement>(null)
@@ -22,7 +25,6 @@ function Board() {
     const [messages, setMessages] = useState<Unwrap<typeof LoadMessages>>([])
     const { data: session, status } = useSession()
     const { socket, isConnected } = useSocket()
-    const { toast } = useToast()
 
     useEffect(() => {
         void LoadMessages().then((data) => {
@@ -118,18 +120,14 @@ function Board() {
                     return
                 }
                 if (data?.error) {
-                    toast({
-                        title: "Uh oh! Something went wrong!",
+                    toast.error("Uh oh! Something went wrong!", {
                         description: data.error,
-                        variant: "destructive",
                     })
                     return
                 }
                 if (data?.ratelimit) {
-                    toast({
-                        title: "Uh oh! You're being Ratelimited!",
+                    toast.error("Uh oh! You're being Ratelimited!", {
                         description: `Try again in ${Math.floor(new Date(data.ratelimit.reset).getTime() / 1000 - new Date().getTime() / 1000)} seconds.`,
-                        variant: "destructive",
                     })
                     return
                 }
@@ -204,8 +202,37 @@ function Board() {
                         </div>
                         <div className="flex w-full items-center justify-between">
                             <div className="flex items-center">
-                                <span className="text-sm font-semibold">
-                                    {message.content}
+                                <span
+                                    className={`${checkStringOnlyEmoji(message.content) ? "text-5xl" : "text-sm"} flex font-semibold`}
+                                >
+                                    <Linkify
+                                        options={{
+                                            render: ({
+                                                attributes,
+                                                content,
+                                            }) => {
+                                                const { href, ...props } =
+                                                    attributes
+                                                return (
+                                                    <Link
+                                                        {...props}
+                                                        href={href as string}
+                                                        target="_blank"
+                                                        rel="noreferrer noopener"
+                                                        className="mx-1 flex items-center justify-center gap-[0.10rem] text-blue-500"
+                                                    >
+                                                        {content}
+                                                        <ExternalLinkIcon
+                                                            size={14}
+                                                            strokeWidth={2.25}
+                                                        />
+                                                    </Link>
+                                                )
+                                            },
+                                        }}
+                                    >
+                                        {message.content}
+                                    </Linkify>
                                 </span>
                             </div>
                         </div>
