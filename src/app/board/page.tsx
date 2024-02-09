@@ -176,7 +176,7 @@ function Board() {
                     >
                         <div className="flex w-full items-center justify-between">
                             <div className="flex">
-                                <Avatar className="mb-3">
+                                <Avatar className="mb-3 rounded-none">
                                     <AvatarImage
                                         // get the image from the reference user of the message
                                         src={message.createdBy.image ?? ""}
