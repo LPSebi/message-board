@@ -24,7 +24,7 @@ export async function sendMessages(message: string) {
     }
 
     // message limit
-    if (message.length > 10000) {
+    if (message.length > 1000) {
         return {
             error: "Message cannot be longer than 1000 characters",
         }

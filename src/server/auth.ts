@@ -1,10 +1,13 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
+import type { Profile } from "next-auth"
 import {
     getServerSession,
     type DefaultSession,
     type NextAuthOptions,
 } from "next-auth"
-import DiscordProvider from "next-auth/providers/discord"
+import DiscordProvider, {
+    type DiscordProfile,
+} from "next-auth/providers/discord"
 
 import { env } from "~/env"
 import { db } from "~/server/db"
@@ -19,10 +22,11 @@ declare module "next-auth" {
     interface Session extends DefaultSession {
         user: {
             id: string
-            // ...other properties
-            // role: UserRole;
-        } & DefaultSession["user"]
+        } & DiscordProfile &
+            DefaultSession["user"]
     }
+    // eslint-disable-next-line @typescript-eslint/no-empty-interface
+    interface Profile extends DiscordProfile {}
 
     // interface User {
     //   // ...other properties
@@ -35,18 +39,54 @@ declare module "next-auth" {
  *
  * @see https://next-auth.js.org/configuration/options
  */
+
+async function upsertUserToDB(userID: string, profile: Profile) {
+    await db.user.upsert({
+        where: {
+            id: userID,
+        },
+        update: {
+            name: profile.username,
+            email: profile.email,
+            emailVerified: profile.email_verified as Date,
+            image: profile.image_url,
+        },
+        create: {
+            name: profile.username,
+            email: profile.email,
+            emailVerified: profile.email_verified as Date,
+            image: profile.image_url,
+        },
+    })
+}
 export const authOptions: NextAuthOptions = {
     callbacks: {
-        session: ({ session, user }) => ({
-            ...session,
-            user: {
-                ...session.user,
-                id: user.id,
-                email: user.email,
-                image: user.image,
-                name: user.name,
-            },
-        }),
+        session: async ({ session, user }) => {
+            const profile = session?.user
+            console.log(user)
+            console.log(profile)
+            await upsertUserToDB(user.id, profile as Profile)
+
+            return {
+                ...session,
+                user: {
+                    ...session.user,
+                    id: user.id,
+                },
+            }
+        },
+        signIn: async ({ user, profile }) => {
+            if (!profile) {
+                return false
+            }
+            try {
+                await upsertUserToDB(user.id, profile)
+                return true
+            } catch (error) {
+                console.error("Error in signIn callback", error)
+                return false
+            }
+        },
     },
     adapter: PrismaAdapter(db),
     providers: [
