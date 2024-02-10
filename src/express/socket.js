@@ -9,6 +9,10 @@ const app = express()
 const server = http.createServer(app)
 
 app.use(express.json())
+app.use(cors())
+// TODO: change this to only allow specified domains
+// allow all origins
+app.options("*", cors())
 
 // Endpoint for sending messages via Socket.IO
 app.post("/api/socket/sendIOMessage", (req, res) => {

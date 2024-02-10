@@ -10,6 +10,7 @@ import DiscordProvider, {
 
 import { env } from "~/env"
 import { db } from "~/server/db"
+// Importing a specific API version
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -40,13 +41,47 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
     callbacks: {
-        session: ({ session, user }) => ({
-            ...session,
-            user: {
-                ...session.user,
-                id: user.id,
-            },
-        }),
+        session: async ({ session, user }) => {
+            // get discord user id from db
+            const discordId = await db.user.findUnique({
+                where: { id: user.id },
+                select: { accounts: { select: { providerAccountId: true } } },
+            })
+            console.log("discordId", discordId?.accounts[0]?.providerAccountId)
+            // fetch new avatar from discord
+            const discordUser = (await fetch(
+                `https://discord.com/api/v9/users/${discordId?.accounts[0]?.providerAccountId}`,
+                {
+                    headers: {
+                        Authorization: `Bot ${env.DISCORD_BOT_TOKEN}`,
+                    },
+                }
+            ).then((res) => res.json())) as DiscordProfile
+            console.log("discordUser", discordUser)
+            // send new avatar to db
+            await db.user
+                .update({
+                    where: { id: user.id },
+                    data: {
+                        image: `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`,
+                    },
+                })
+                .then(() => {
+                    console.log("avatar updated")
+                    console.log(
+                        "userImage",
+                        `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`
+                    )
+                })
+            console.log("userImage", user.image)
+            return {
+                ...session,
+                user: {
+                    ...session.user,
+                    id: user.id,
+                },
+            }
+        },
     },
     adapter: PrismaAdapter(db),
     providers: [

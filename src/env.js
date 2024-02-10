@@ -38,6 +38,7 @@ export const env = createEnv({
         ),
         DISCORD_CLIENT_ID: z.string(),
         DISCORD_CLIENT_SECRET: z.string(),
+        DISCORD_BOT_TOKEN: z.string(),
     },
 
     shared: {
@@ -66,6 +67,7 @@ export const env = createEnv({
         NEXTAUTH_URL: process.env.NEXTAUTH_URL,
         DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
         DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
+        DISCORD_BOT_TOKEN: process.env.DISCORD_BOT_TOKEN,
         NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
     },
     /**
