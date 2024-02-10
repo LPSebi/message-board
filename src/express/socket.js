@@ -15,7 +15,7 @@ app.use(cors())
 app.options("*", cors())
 
 // Endpoint for sending messages via Socket.IO
-app.post("/api/socket/sendIOMessage", (req, res) => {
+app.post("/api/socket/sendIOMessage", cors(), (req, res) => {
     const io = req.socket.server.io
     const content = req.body.content
 
@@ -28,7 +28,7 @@ app.post("/api/socket/sendIOMessage", (req, res) => {
 })
 
 // Endpoint for checking Socket.IO connection status and reconnect if necessary
-app.get("/api/socket/io", (req, res) => {
+app.get("/api/socket/io", cors(), (req, res) => {
     const io = req.socket.server.io
     console.log(res.socket.server.io)
 
