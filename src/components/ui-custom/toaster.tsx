@@ -6,7 +6,7 @@ export default function Toaster() {
     return (
         <SonnerToaster
             richColors
-            expand
+            // expand
             theme={resolvedTheme === "dark" ? "dark" : "light" || "system"}
         />
     )
