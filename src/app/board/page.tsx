@@ -73,11 +73,6 @@ function Board() {
                     console.log("message exists")
                     return
                 }
-                // check if the message is from the current user
-                if (data.createdBy.id === session?.user?.id) {
-                    console.log("message is from current user")
-                    return
-                }
 
                 setMessages((messages) => [...messages, data])
             }
@@ -121,10 +116,12 @@ function Board() {
     }
 
     function sendMessage(message: string) {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        sendMessages(message)
+        void sendMessages(message)
             .then((data) => {
-                console.log(data)
+                if (!data) {
+                    return
+                }
+
                 // check data for errors
                 if (data instanceof Error) {
                     console.error(data)
@@ -142,15 +139,8 @@ function Board() {
                     })
                     return
                 }
-                if (!data) {
-                    return
-                }
 
                 setInputContent("")
-                setMessages((messages) => [
-                    ...messages,
-                    data as (typeof messages)[number],
-                ])
             })
             .finally(() => {
                 setPressedSend(false)
