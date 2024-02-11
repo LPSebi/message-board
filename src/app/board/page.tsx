@@ -1,7 +1,12 @@
 "use client"
 import type { Prisma } from "@prisma/client"
 import { AvatarImage } from "@radix-ui/react-avatar"
-import { ExternalLinkIcon, Loader2Icon, SendHorizontalIcon } from "lucide-react"
+import {
+    AlertTriangleIcon,
+    ExternalLinkIcon,
+    Loader2Icon,
+    SendHorizontalIcon,
+} from "lucide-react"
 import { signIn, useSession } from "next-auth/react"
 import { Suspense, useEffect, useRef, useState } from "react"
 import SocketIOBadge from "~/components/ui-custom/socketio-badge"
@@ -17,6 +22,12 @@ import { LoadMessages } from "~/server/actions/loadMessages"
 import { sendMessages } from "~/server/actions/sendMessage"
 import Linkify from "linkify-react"
 import Link from "next/link"
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+} from "~/components/ui/tooltip"
+import { TooltipTrigger } from "@radix-ui/react-tooltip"
 
 function Board() {
     const inputRef = useRef<HTMLInputElement>(null)
@@ -219,19 +230,40 @@ function Board() {
                                                         href={href as string}
                                                         target="_blank"
                                                         rel="noreferrer noopener"
-                                                        className="mx-1 flex items-center justify-center gap-[0.10rem] text-blue-500"
+                                                        className="mx-1 text-blue-500"
                                                     >
-                                                        {content}
-                                                        <ExternalLinkIcon
-                                                            size={14}
-                                                            strokeWidth={2.25}
-                                                        />
+                                                        <Tooltip
+                                                            delayDuration={100}
+                                                        >
+                                                            <TooltipTrigger className="flex items-center justify-center gap-[0.10rem]">
+                                                                {content}
+                                                                <ExternalLinkIcon
+                                                                    size={14}
+                                                                    strokeWidth={
+                                                                        2.25
+                                                                    }
+                                                                />
+                                                            </TooltipTrigger>
+                                                            <TooltipContent className="flex items-center justify-center gap-1">
+                                                                <AlertTriangleIcon
+                                                                    size={14}
+                                                                    strokeWidth={
+                                                                        2.25
+                                                                    }
+                                                                    color="hsl(var(--destructive))"
+                                                                />
+                                                                This link is not
+                                                                virus scanned
+                                                            </TooltipContent>
+                                                        </Tooltip>
                                                     </Link>
                                                 )
                                             },
                                         }}
                                     >
-                                        {message.content}
+                                        <TooltipProvider>
+                                            {message.content}
+                                        </TooltipProvider>
                                     </Linkify>
                                 </span>
                             </div>
