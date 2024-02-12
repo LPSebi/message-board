@@ -85,6 +85,7 @@ function Board() {
 
     // check if session is loading
     if (status === "loading") {
+        // TODO: return loading skeleton instead of loading ping
         return (
             <div className="flex h-screen w-screen items-center justify-center bg-background">
                 <div className="flex flex-col items-center justify-center gap-5">
