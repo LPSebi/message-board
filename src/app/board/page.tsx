@@ -68,21 +68,6 @@ function Board() {
         }
     }, [session, socket, messages])
 
-    // check if session is loading
-    // if (status === "loading") {
-    // TODO: return loading skeleton instead of loading ping
-
-    // return (
-    //     <div className="flex h-screen w-screen items-center justify-center bg-background">
-    //         <div className="flex flex-col items-center justify-center gap-5">
-    //             <div className="flex gap-3 text-4xl font-semibold">
-    //                 <div className="h-20 w-20 animate-ping rounded-full bg-primary animate-duration-700"></div>
-    //             </div>
-    //         </div>
-    //     </div>
-    // )
-    // }
-
     if (!session && status !== "loading") {
         return (
             <div className="flex h-screen w-screen items-center justify-center bg-background">
