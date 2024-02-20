@@ -119,10 +119,10 @@ function Board() {
             })
     }
 
-    const AlwaysScrollToBottom = () => {
+    const AlwaysScrollToBottom = ({ className }: { className: string }) => {
         const elementRef = useRef<HTMLDivElement>(null)
         useEffect(() => elementRef?.current?.scrollIntoView())
-        return <span ref={elementRef} />
+        return <span ref={elementRef} className={className} />
     }
 
     //TODO - Fix overflow
@@ -140,14 +140,13 @@ function Board() {
                 </div>
             </div>
             <div
-                className={`flex flex-col gap-5 overflow-x-hidden ${status === "loading" ? "overflow-hidden" : "overflow-y-scroll"}`}
+                className={`flex flex-col gap-5 overflow-x-hidden ${status === "loading" ? "overflow-hidden" : "overflow-y-scroll"} divide-y`}
             >
                 <LoadMessagesComponent
                     messages={messages}
                     skeleton={status === "loading"}
-                    // skeleton
                 />
-                <AlwaysScrollToBottom />
+                <AlwaysScrollToBottom className="divide-y-0" />
             </div>
             <div className="flex h-16 items-center justify-center border-t">
                 <form className="flex h-full w-full content-center items-center gap-3 px-2 sm:px-16 xl:px-24">
