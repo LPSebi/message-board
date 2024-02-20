@@ -1,16 +1,16 @@
-import type { LoadMessages } from "~/server/actions/loadMessages"
-import type { Unwrap } from "~/lib/types"
-import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
 import Linkify from "linkify-react"
-import { checkStringOnlyEmoji } from "~/lib/utils"
+import { AlertTriangleIcon, ExternalLinkIcon } from "lucide-react"
 import Link from "next/link"
+import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar"
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from "~/components/ui/tooltip"
-import { AlertTriangleIcon, ExternalLinkIcon } from "lucide-react"
+import type { Unwrap } from "~/lib/types"
+import { checkStringOnlyEmoji } from "~/lib/utils"
+import type { LoadMessages } from "~/server/actions/loadMessages"
 import { Skeleton } from "./ui/skeleton"
 
 export default function RenderMessages({
@@ -26,7 +26,7 @@ export default function RenderMessages({
             .map((_, index) => (
                 <div
                     key={index}
-                    className="flex flex-col items-center justify-center break-all border-b px-5 pb-3 last-of-type:border-b-0"
+                    className="flex flex-col items-center justify-center break-all px-5 pt-3"
                 >
                     <div className="flex w-full items-center justify-between">
                         <div className="flex">
@@ -54,7 +54,7 @@ export default function RenderMessages({
             {messages.map((message) => (
                 <div
                     key={message.id}
-                    className="flex flex-col items-center justify-center break-all border-b px-5 pb-3 last-of-type:border-b-0"
+                    className="flex flex-col items-center justify-center break-all px-5 pt-3"
                 >
                     <div className="flex w-full items-center justify-between">
                         <div className="flex">
