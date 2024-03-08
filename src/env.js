@@ -7,7 +7,7 @@ export const env = createEnv({
      * isn't built with invalid env vars.
      */
     server: {
-        DATABASE_URL: z
+        MYSQL_URL: z
             .string()
             .url()
             .refine(
@@ -59,7 +59,7 @@ export const env = createEnv({
      * middlewares) or client-side so we need to destruct manually.
      */
     runtimeEnv: {
-        DATABASE_URL: process.env.DATABASE_URL,
+        MYSQL_URL: process.env.MYSQL_URL,
         UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL,
         UPSTASH_REDIS_REST_TOKEN: process.env.UPSTASH_REDIS_REST_TOKEN,
         NODE_ENV: process.env.NODE_ENV,

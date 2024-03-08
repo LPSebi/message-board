@@ -17,7 +17,7 @@ export const db =
                 : ["error"],
         datasources: {
             db: {
-                url: env.DATABASE_URL,
+                url: env.MYSQL_URL,
             },
         },
     })
