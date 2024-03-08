@@ -16,7 +16,6 @@
     "dependencies": {
         "@next-auth/prisma-adapter": "^1.0.7",
         "@planetscale/database": "^1.16.0",
-        "@prisma/adapter-planetscale": "^5.10.0",
         "@prisma/client": "^5.10.0",
         "@radix-ui/react-avatar": "^1.0.4",
         "@radix-ui/react-slot": "^1.0.2",
