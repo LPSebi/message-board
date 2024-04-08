@@ -87,7 +87,7 @@ export async function sendMessages(message: string) {
     createdBy: DBUser,
   }
 
-  await fetch(env.NEXT_PUBLIC_SOCKET_URL + "/api/socket/sendIOMessage", {
+  await fetch(env.NEXT_INTERNAL_SOCKET_URL + "/api/socket/sendIOMessage", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

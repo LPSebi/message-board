@@ -1,0 +1,8 @@
+FROM node:18-alpine AS base
+
+FROM base AS socket
+WORKDIR /app
+COPY package.json package-lock.json* ./
+RUN npm ci
+COPY . .
+CMD npm run start:socket

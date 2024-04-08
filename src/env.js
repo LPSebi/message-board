@@ -14,14 +14,13 @@ export const env = createEnv({
         (str) => !str.includes("YOUR_MYSQL_URL_HERE"),
         "You forgot to change the default URL"
       ),
-    REDIS_REST_URL: z
+    REDIS_URL: z
       .string()
       .url()
       .refine(
         (str) => !str.includes("YOUR_REDIS_URL_HERE"),
         "You forgot to change the default redis URL"
       ),
-    REDIS_REST_TOKEN: z.string(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -39,6 +38,7 @@ export const env = createEnv({
     DISCORD_CLIENT_ID: z.string(),
     DISCORD_CLIENT_SECRET: z.string(),
     DISCORD_BOT_TOKEN: z.string(),
+    NEXT_INTERNAL_SOCKET_URL: z.string().url(),
   },
 
   shared: {
@@ -60,8 +60,7 @@ export const env = createEnv({
    */
   runtimeEnv: {
     MYSQL_URL: process.env.MYSQL_URL,
-    REDIS_REST_URL: process.env.REDIS_REST_URL,
-    REDIS_REST_TOKEN: process.env.REDIS_REST_TOKEN,
+    REDIS_URL: process.env.REDIS_URL,
     NODE_ENV: process.env.NODE_ENV,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
@@ -69,6 +68,7 @@ export const env = createEnv({
     DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
     DISCORD_BOT_TOKEN: process.env.DISCORD_BOT_TOKEN,
     NEXT_PUBLIC_SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL,
+    NEXT_INTERNAL_SOCKET_URL: process.env.NEXT_INTERNAL_SOCKET_URL,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

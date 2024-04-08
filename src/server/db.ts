@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client"
-import { Redis } from "@upstash/redis"
-import type { RedisConfigNodejs } from "@upstash/redis"
+import { Redis } from "ioredis"
 
 import { env } from "~/env.js"
 
@@ -22,8 +21,26 @@ export const db =
 
 if (env.NODE_ENV !== "production") globalForPrisma.prisma = db
 
-export const redisConfig: RedisConfigNodejs = {
-  url: env.REDIS_REST_URL,
-  token: env.REDIS_REST_TOKEN,
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+export const redisConn = new Redis(env.REDIS_URL)
+
+// NOTE: Adapter for Redis upstash ratelimit
+export const redis = {
+  sadd: <TData>(key: string, ...members: TData[]) =>
+    redisConn.sadd(key, ...members.map((m) => String(m))),
+  eval: async <TArgs extends unknown[], TData = unknown>(
+    script: string,
+    keys: string[],
+    args: TArgs
+  ) =>
+    redisConn.eval(
+      script,
+      keys.length,
+      ...keys,
+      ...(args ?? []).map((a) => String(a))
+    ) as Promise<TData>,
+  hset: async <TArgs extends unknown[], TData = unknown>(
+    key: string,
+    obj: Record<string, TArgs[0]>
+  ) => redisConn.hset(key, obj) as Promise<TData>,
 }
-export const redis = new Redis(redisConfig)
