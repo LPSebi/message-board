@@ -11,8 +11,8 @@ services:
       - socket
       - redis
       - db
-  label:
-    - "traefik.http.routers.whoami.rule=Host(`localhost`)"
+    label:
+      - "traefik.http.routers.whoami.rule=Host(`localhost`)"
 
   socket:
     restart: unless-stopped
