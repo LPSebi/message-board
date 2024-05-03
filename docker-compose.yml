@@ -51,6 +51,12 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
 
+  whoami:
+    # A container that exposes an API to show its IP address
+    image: traefik/whoami
+    labels:
+      - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
+
 volumes:
   mysql_data:
     driver: local
