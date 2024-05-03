@@ -11,7 +11,7 @@ services:
       - socket
       - redis
       - db
-    label:
+    labels:
       - "traefik.http.routers.whoami.rule=Host(`localhost`)"
 
   socket:
